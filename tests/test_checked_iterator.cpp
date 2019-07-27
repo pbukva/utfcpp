@@ -19,6 +19,22 @@ TEST(CheckedIteratrTests, test_increment)
     EXPECT_EQ (++it, endit);
 }
 
+TEST(CheckedIteratrTests, test_std_string)
+{
+  std::string const threechars("\xf0\x90\x8d\x86\xe6\x97\xa5\xd1\x88");
+  using const_utf8_iter = utf8::iterator<std::string::const_iterator>;
+  const_utf8_iter it(threechars.cbegin(), threechars.cbegin(), threechars.cend());
+  const_utf8_iter it2 = it;
+  EXPECT_EQ (it2, it);
+  EXPECT_EQ (*it, 0x10346);
+  EXPECT_EQ (*(++it), 0x65e5);
+  EXPECT_EQ ((*it++), 0x65e5);
+  EXPECT_EQ (*it, 0x0448);
+  EXPECT_NE (it, it2);
+  const_utf8_iter endit (threechars.cend(), threechars.cbegin(), threechars.cend());
+  EXPECT_EQ (++it, endit);
+}
+
 TEST(CheckedIteratrTests, test_decrement)
 {
     const char* threechars = "\xf0\x90\x8d\x86\xe6\x97\xa5\xd1\x88";
