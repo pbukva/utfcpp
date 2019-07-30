@@ -76,21 +76,23 @@ namespace utf8
             throw invalid_code_point(cp);
 
         if (cp < 0x80)                        // one octet
-            *(result++) = static_cast<uint8_t>(cp);
+        {
+            *(result++) = static_cast<char const &>(cp);
+        }
         else if (cp < 0x800) {                // two octets
-            *(result++) = static_cast<uint8_t>((cp >> 6)            | 0xc0);
-            *(result++) = static_cast<uint8_t>((cp & 0x3f)          | 0x80);
+            *(result++) = static_cast<char const &>((cp >> 6)            | 0xc0);
+            *(result++) = static_cast<char const &>((cp & 0x3f)          | 0x80);
         }
         else if (cp < 0x10000) {              // three octets
-            *(result++) = static_cast<uint8_t>((cp >> 12)           | 0xe0);
-            *(result++) = static_cast<uint8_t>(((cp >> 6) & 0x3f)   | 0x80);
-            *(result++) = static_cast<uint8_t>((cp & 0x3f)          | 0x80);
+            *(result++) = static_cast<char const &>((cp >> 12)           | 0xe0);
+            *(result++) = static_cast<char const &>(((cp >> 6) & 0x3f)   | 0x80);
+            *(result++) = static_cast<char const &>((cp & 0x3f)          | 0x80);
         }
         else {                                // four octets
-            *(result++) = static_cast<uint8_t>((cp >> 18)           | 0xf0);
-            *(result++) = static_cast<uint8_t>(((cp >> 12) & 0x3f)  | 0x80);
-            *(result++) = static_cast<uint8_t>(((cp >> 6) & 0x3f)   | 0x80);
-            *(result++) = static_cast<uint8_t>((cp & 0x3f)          | 0x80);
+            *(result++) = static_cast<char const &>((cp >> 18)           | 0xf0);
+            *(result++) = static_cast<char const &>(((cp >> 12) & 0x3f)  | 0x80);
+            *(result++) = static_cast<char const &>(((cp >> 6) & 0x3f)   | 0x80);
+            *(result++) = static_cast<char const &>((cp & 0x3f)          | 0x80);
         }
         return result;
     }
@@ -148,7 +150,7 @@ namespace utf8
             case internal::INVALID_LEAD :
             case internal::INCOMPLETE_SEQUENCE :
             case internal::OVERLONG_SEQUENCE :
-                throw invalid_utf8(*it);
+                throw invalid_utf8(static_cast<uint8_t const&>(*it));
             case internal::INVALID_CODE_POINT :
                 throw invalid_code_point(cp);
         }
@@ -172,7 +174,7 @@ namespace utf8
         // Go back until we hit either a lead octet or start
         while (utf8::internal::is_trail(*(--it)))
             if (it == start)
-                throw invalid_utf8(*it); // error - no lead byte in the sequence
+                throw invalid_utf8(static_cast<uint8_t const&>(*it)); // error - no lead byte in the sequence
         return utf8::peek_next(it, end);
     }
 

@@ -34,9 +34,9 @@ DEALINGS IN THE SOFTWARE.
 namespace utf8
 {
 
-    inline void append(char32_t cp, std::string& s)
+    inline void append(uint32_t cp, std::string& s)
     {
-        append(uint32_t(cp), std::back_inserter(s));
+        append(cp, std::back_inserter(s));
     }
 
     inline std::string utf16to8(const std::u16string& s)
@@ -70,7 +70,7 @@ namespace utf8
     inline std::size_t find_invalid(const std::string& s)
     {
         std::string::const_iterator invalid = find_invalid(s.begin(), s.end());
-        return (invalid == s.end()) ? std::string::npos : (invalid - s.begin());
+        return (invalid == s.end()) ? std::string::npos : static_cast<std::size_t>(invalid - s.begin());
     }
 
     inline bool is_valid(const std::string& s)
